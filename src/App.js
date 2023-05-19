@@ -1,6 +1,6 @@
 import { createContext, useState } from 'react';
 import './App.css';
-import TaskList from './components/TaksList';
+import TaskList from './components/TasksList';
 
 export const Context = createContext();
 
