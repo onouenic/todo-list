@@ -1,42 +1,38 @@
-import { useContext, useEffect } from "react";
-import { Context } from "../App";
+import { useState } from "react";
+import Task from "./Task";
 
 export default function TaskList() {
 
-  const { tasks, setTasks } = useContext(Context);
+  const [ tasks, setTasks ] = useState([]);
+  const [ title, setTitle ] = useState('');
 
-  useEffect(() => {
-    const setTasksToStorage = () => {
-      localStorage.setItem('tasks', JSON.stringify(tasks))
-    }
-    setTasksToStorage();
+  const handleChangeTitle = (e) => {
+    setTitle(e.target.value);
+  }
 
-    const getTasksFromStorage = () => { 
-      const tasks = localStorage.getItem('tasks');
-      const data = JSON.parse(tasks)
-      setTasks(data);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const id = tasks ? tasks.length + 1 : 1;
+    const newTask = {
+      id,
+      title,
+      completed: false,
     }
-    getTasksFromStorage();
-  }, [])
+    setTasks([...tasks, newTask]);
+    setTitle('');
+  }
 
   return (
-    <ul>
-      {tasks && tasks.map((task) => (
-        <li key={task.id}>
-          <div>
-            <span>{task.title}</span>
-            <label>
-              Concluída:
-              <input
-                type="checkbox"
-                checked={task.completed}
-                onChange={() => setTasks({ ...task, completed: !task.completed})}
-              />
-              <button onClick={() => tasks.map(({ id }) => id !== task.id )}>Excluir</button>
-            </label>
-          </div>
-        </li>
-      ))}
-    </ul>
+    <div>
+      <ul>
+        {tasks && tasks.map((task) => (
+          <Task key={task.id} task={task} tasks={tasks} setTasks={setTasks} />
+        ))}
+      </ul>
+      <form name="new-task">
+        <input type="text" name="title" value={title} onChange={handleChangeTitle} />
+        <button type="submit" onClick={handleSubmit}>Adicionar</button>
+      </form>
+    </div>
   );
 }
