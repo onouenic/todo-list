@@ -3,12 +3,15 @@ import { useRef } from "react";
 export default function Task({ task, tasks, setTasks }) {
 
   const titleRef = useRef();
+  const liRef = useRef();
 
   const handleChangeCompleted = (e) => {
     e.preventDefault();
-    titleRef.current.style.textDecoration === 'line-through'
-    ? titleRef.current.style.textDecoration = ''
-    : titleRef.current.style.textDecoration = 'line-through';
+    if (liRef.current.className.includes('bg-green-600')) {
+      liRef.current.className = liRef.current.className.replace('bg-green-600', '');
+    } else {
+      liRef.current.className += ' bg-green-600';
+    }
     tasks.forEach((t, index) => {
       if (t.id === task.id) {
         const newTasks = [...tasks];
@@ -30,18 +33,19 @@ export default function Task({ task, tasks, setTasks }) {
   }
 
   return (
-    <li>
-      <div>
-        <span>{task.id}</span>
-        <span ref={titleRef}>{task.title}</span>
-        <label>
-          Concluída:
-          <button
-            type="submit"
-            onClick={(e) => handleChangeCompleted(e, task)}
-          >Concluida</button>
-        </label>
-        <button onClick={handleDelete}>Excluir</button>
+    <li ref={liRef} className={`flex justify-between gap-4 p-8 items-center border shadow-md rounded-md h-[10%] w-[80%] `}>
+      <span>{task.id}: </span>
+      <span ref={titleRef}>{task.title}</span>
+      <div className="flex gap-4">
+        <button
+          className="border shadow-md rounded-md w-24 h-10 bg-orange-600 hover:transition-colors hover:bg-orange-500"
+          type="submit"
+          onClick={(e) => handleChangeCompleted(e, task)}
+        >Concluida</button>
+        <button
+          className="border shadow-md rounded-md w-24 h-10 bg-red-600 hover:transition-colors hover:bg-red-500"
+          onClick={handleDelete}
+        >Excluir</button>
       </div>
     </li>
   )
