@@ -1,10 +1,30 @@
-import { useContext, useState } from "react";
+import { useContext, useReducer, useState } from "react";
 import Task from "./Task";
 import { ThemeContext } from "../App";
 
+function reducer(state, action) {
+  switch(action.type) {
+    case 'ADD_TASK':
+      return [...state, action.payload];
+    case 'REMOVE_TASK':
+      return state.filter((task) => task.id !== action.payload);
+    case 'TOGGLE_TASK':
+      return state.map((task) => {
+        if (task.id === action.payload) {
+          return { ...task, completed: !task.completed }
+        }
+        return task;
+      }
+    );
+    default:
+      throw new Error ('Action type not found');
+  }
+}
+
 export default function TaskList() {
 
-  const [ tasks, setTasks ] = useState([]);
+  //const [ tasks, setTasks ] = useState([]);
+  const [ tasks, dispatch ] = useReducer(reducer, []);
   const [ title, setTitle ] = useState('');
   const { theme } = useContext(ThemeContext);
 
@@ -20,7 +40,8 @@ export default function TaskList() {
       title,
       completed: false,
     }
-    setTasks([...tasks, newTask]);
+    dispatch({ type: 'ADD_TASK', payload: newTask })
+    //setTasks([...tasks, newTask]);
     setTitle('');
   }
 
@@ -28,7 +49,13 @@ export default function TaskList() {
     <div className="flex flex-col gap-4 justify-center items-center h-screen border shadow-md w-[50%]">
       <ul className="flex flex-col gap-4 w-full items-center">
         {tasks && tasks.map((task) => (
-          <Task key={task.id} task={task} tasks={tasks} setTasks={setTasks} />
+          <Task
+            key={task.id}
+            task={task}
+            tasks={tasks}
+            /* setTasks={setTasks} */
+            dispatch={dispatch}
+          />
         ))}
       </ul>
       <form className="flex flex-col justify-center items-center gap-4" name="new-task">
