@@ -1,12 +1,12 @@
 import { useRef } from "react";
 
-export default function Task({ task, tasks, setTasks, dispatch }) {
+export default function Task({ task, tasksDispatch, idsDispatch, idsUtilizados }) {
 
   const liRef = useRef();
 
   const handleChangeCompleted = (e) => {
     e.preventDefault();
-    dispatch({ type: 'TOGGLE_TASK', payload: task.id });
+    tasksDispatch({ type: 'TOGGLE_TASK', payload: task.id });
     if (liRef.current.className.includes('bg-green-600')) {
       liRef.current.className = liRef.current.className.replace('bg-green-600', '');
     } else {
@@ -23,7 +23,9 @@ export default function Task({ task, tasks, setTasks, dispatch }) {
 
   const handleDelete = (e) => {
     e.preventDefault();
-    dispatch({ type: 'REMOVE_TASK', payload: task.id });
+    tasksDispatch({ type: 'REMOVE_TASK', payload: task.id });
+    idsDispatch({ type: 'ADD_ID', payload: task.id });
+    console.log(idsUtilizados);
     /* tasks.forEach((t, index) => {
       if (t.id === task.id) {
         const newTasks = [...tasks];
